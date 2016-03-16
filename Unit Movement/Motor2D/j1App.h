@@ -16,7 +16,6 @@ class j1Gui;
 class M_GUI;
 class M_Audio;
 class M_FileSystem;
-class j1SceneGUI;
 class S_SceneMap;
 class S_SceneUnit;
 class M_Map;
@@ -104,7 +103,6 @@ public:
 	M_Render*				render = NULL;
 	M_Textures*				tex = NULL;
 	M_Audio*				audio = NULL;
-	j1SceneGUI*				sceneGUI = NULL;
 	S_SceneMap*				sceneMap = NULL;
 	S_SceneUnit*			sceneUnit = NULL;
 	M_FileSystem*			fs = NULL;
