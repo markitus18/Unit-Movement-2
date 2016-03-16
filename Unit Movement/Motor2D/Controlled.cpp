@@ -3,18 +3,12 @@
 #include "Entity.h"
 #include "Controlled.h"
 
-#include "M_Render.h"
 #include "j1App.h"
-#include "M_Map.h"
 
 #include "M_EntityManager.h"
-
-#include "j1App.h"
 #include "M_GUI.h"
 #include "UI_Element.h"
 
-#include "M_PathFinding.h"
-#include "C_Vec2.h"
 
 Controlled::Controlled() :Entity()
 {
