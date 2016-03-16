@@ -58,16 +58,6 @@ public:
 		return(r);
 	}
 
-	C_Vec2 operator -(const TYPE &v) const
-	{
-		C_Vec2 r;
-
-		r.x = x - v;
-		r.y = y - v;
-
-		return(r);
-	}
-
 	C_Vec2 operator + (const C_Vec2 &v) const
 	{
 		C_Vec2 r;
@@ -86,14 +76,6 @@ public:
 		return(*this);
 	}
 
-	const C_Vec2& operator -=(const int &v)
-	{
-		x -= v;
-		y -= v;
-
-		return(*this);
-	}
-
 	const C_Vec2<TYPE>& operator +=(const C_Vec2<TYPE> &v)
 	{
 		x += v.x;
@@ -108,7 +90,7 @@ public:
 		return (*this);
 	}
 
-	C_Vec2<TYPE> operator * (const float mult)
+	C_Vec2<TYPE> operator * (const float mult) const
 	{
 		C_Vec2<TYPE> newVec;
 		newVec.x = x * mult;
@@ -123,30 +105,14 @@ public:
 		return (*this);
 	}
 
-	C_Vec2<TYPE> operator / (const float mult)
+	C_Vec2<TYPE> operator / (const float mult) const
 	{
 		C_Vec2<TYPE> newVec;
 		newVec.x = x / mult;
 		newVec.y = y / mult;
 		return newVec;
 	}
-	/*
-	bool operator ==(const C_Vec2& v) const
-	{
-	return (x == v.x && y == v.y);
-	}
 
-	bool operator !=(const C_Vec2& v) const
-	{
-	return (x != v.x || y != v.y);
-	}
-
-	// Utils ------------------------------------------------
-	bool IsZero() const
-	{
-	return (x == 0 && y == 0);
-	}
-	*/
 	C_Vec2& SetToZero()
 	{
 		x = y = 0;

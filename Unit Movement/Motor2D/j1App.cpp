@@ -11,15 +11,12 @@
 #include "M_Textures.h"
 #include "M_Audio.h"
 #include "S_SceneMap.h"
-#include "S_SceneUnit.h"
 #include "M_FileSystem.h"
 #include "M_Map.h"
 #include "M_PathFinding.h"
 #include "M_Fonts.h"
 #include "M_GUI.h"
 #include "M_Console.h"
-//#include "Entity.h"
-//#include "Unit.h"
 #include "M_EntityManager.h"
 #include "M_CollisionController.h"
 
@@ -41,7 +38,6 @@ j1App::j1App(int argc, char* args[]) : argc(argc), args(args)
 
 	//Scenes-------------------------
 	sceneMap = new S_SceneMap(true);
-	sceneUnit = new S_SceneUnit(false);
 	//-------------------------------
 
 	fs = new M_FileSystem(true);
@@ -63,7 +59,6 @@ j1App::j1App(int argc, char* args[]) : argc(argc), args(args)
 	AddModule(gui);
 	AddModule(console);
 	AddScene(sceneMap);
-	AddScene(sceneUnit);
 	AddModule(entityManager);
 	AddModule(pathFinding);
 	AddModule(collisionController);
