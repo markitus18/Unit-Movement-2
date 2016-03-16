@@ -29,7 +29,6 @@ public:
 	//Movement methods
 	bool UpdateVelocity(float dt);
 	void GetDesiredVelocity();
-	C_Vec2<float> GetcurrentVelocity();
 
 	bool Rotate(float dt);
 	bool Move(float dt, bool& col);
@@ -60,7 +59,7 @@ public:
 public:
 	//Collision variables
 	int priority;
-	int colRadius;
+	int colRadius = 5;
 
 private:
 	Unit_Type type = ARBITER;

@@ -9,7 +9,6 @@
 #include "M_GUI.h"
 #include "UI_Element.h"
 
-
 Controlled::Controlled() :Entity()
 {
 	CreateBar();
