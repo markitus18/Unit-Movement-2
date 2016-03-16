@@ -19,7 +19,6 @@ class M_FileSystem;
 class j1SceneGUI;
 class S_SceneMap;
 class S_SceneUnit;
-class S_SceneGUI;
 class M_Map;
 class M_PathFinding;
 class M_Console;
@@ -108,7 +107,6 @@ public:
 	j1SceneGUI*				sceneGUI = NULL;
 	S_SceneMap*				sceneMap = NULL;
 	S_SceneUnit*			sceneUnit = NULL;
-	S_SceneGUI*				sceneGui = NULL;
 	M_FileSystem*			fs = NULL;
 	M_Map*					map = NULL;
 	M_PathFinding*			pathFinding = NULL;

@@ -22,7 +22,6 @@
 //#include "Unit.h"
 #include "M_EntityManager.h"
 #include "M_CollisionController.h"
-#include "S_SceneGUI.h"
 
 
 
@@ -43,7 +42,6 @@ j1App::j1App(int argc, char* args[]) : argc(argc), args(args)
 	//Scenes-------------------------
 	sceneMap = new S_SceneMap(true);
 	sceneUnit = new S_SceneUnit(false);
-	sceneGui = new S_SceneGUI(false);
 	//-------------------------------
 
 	fs = new M_FileSystem(true);

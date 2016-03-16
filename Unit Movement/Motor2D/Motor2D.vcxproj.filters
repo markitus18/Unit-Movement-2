@@ -82,9 +82,6 @@
     <ClCompile Include="Log.cpp">
       <Filter>Desenvolupament  ========</Filter>
     </ClCompile>
-    <ClCompile Include="S_SceneGUI.cpp">
-      <Filter>Desenvolupament  ========\Scenes</Filter>
-    </ClCompile>
     <ClCompile Include="M_CollisionController.cpp">
       <Filter>Desenvolupament  ========\Modules</Filter>
     </ClCompile>
@@ -191,9 +188,6 @@
     </ClInclude>
     <ClInclude Include="C_Animation.h">
       <Filter>Containers</Filter>
-    </ClInclude>
-    <ClInclude Include="S_SceneGUI.h">
-      <Filter>Desenvolupament  ========\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="M_CollisionController.h">
       <Filter>Desenvolupament  ========\Modules</Filter>
