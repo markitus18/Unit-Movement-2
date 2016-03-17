@@ -67,6 +67,8 @@ private:
 	bool CheckIfEnd(node* node, iPoint end);
 	void FinishPathFinding(C_DynArray<iPoint>& pathRef);
 
+	void DrawDebug();
+
 private:
 
 	int				lowestF;
@@ -74,6 +76,8 @@ private:
 	node*			goal;
 	node*			lastParent;
 	C_List_item<node*>* lowestFNode;
+
+	int				currentSteps = 0;
 
 
 public:

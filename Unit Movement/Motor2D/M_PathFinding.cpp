@@ -5,6 +5,8 @@
 #include "M_CollisionController.h"
 #include "Unit.h"
 #include "M_Input.h"
+#include "M_Render.h"
+#include "S_SceneMap.h"
 
 M_PathFinding::M_PathFinding(bool start_enabled) : j1Module(start_enabled)
 {
@@ -53,6 +55,7 @@ bool M_PathFinding::Update(float dt)
 		App->collisionController->mapChanged = true;
 		mapChanged = false;
 	}
+
 	return true;
 }
 
@@ -97,9 +100,10 @@ void M_PathFinding::FindPath()
 
 void M_PathFinding::AutomaticPath()
 {
-	while (!pathFinished)
+	while (!pathFinished && currentSteps < 500)
 	{
 		StepUp();
+		++currentSteps;
 	}
 }
 
@@ -186,6 +190,7 @@ bool M_PathFinding::StartPathFinding()
 {
 	bool ret = false;
 	pathFound = false;
+	currentSteps = 0;
 	if (mapChanged)
 	{
 		LoadMapData();
@@ -427,6 +432,11 @@ void M_PathFinding::FinishPathFinding(C_DynArray<iPoint>& pathRef)
 	closedList.clear();
 
 	pathFound = true;
+}
+
+void M_PathFinding::DrawDebug()
+{
+
 }
 
 bool M_PathFinding::map::isWalkable(int x, int y) const
