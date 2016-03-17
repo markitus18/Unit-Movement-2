@@ -106,7 +106,7 @@ void M_CollisionController::DoUnitLoop()
 				bool stop = false;
 				for (int n = 0; n < App->entityManager->unitList.count(); n++ && !stop)
 				{
-					if (i != n)
+					if (i != n  && App->entityManager->unitList[n]->targetReached)
 					{
 						Unit* unit2 = App->entityManager->unitList[n];
 						if (DoUnitsIntersect(unit, unit2))
@@ -186,8 +186,26 @@ void M_CollisionController::SplitUnits(Unit* unit1, Unit* unit2)
 	vec.Normalize();
 	vec *= unit1->colRadius + unit2->colRadius + 1;
 
+	if (vec.GetModule() == 0)
+	{
+		vec.x = unit1->colRadius + unit2->colRadius + 1;
+		vec.SetAngle(rand() % 360);
+	}
+
 	fPoint pos = vec.position + fPoint{vec.x, vec.y};
 	iPoint tile = App->map->WorldToMap(pos.x, pos.y);
 	iPoint dst = App->map->MapToWorld(tile.x, tile.y);
+
+	int loops = 0;
+	while (!App->pathFinding->IsWalkable(tile.x, tile.y) && loops < 24)
+	{
+		vec.SetAngle(vec.GetAngle() + 15);
+		pos = vec.position + fPoint{ vec.x, vec.y };
+		tile = App->map->WorldToMap(pos.x, pos.y);
+		dst = App->map->MapToWorld(tile.x, tile.y);
+		loops++;
+	}
+
 	unit2->SetTarget(pos.x, pos.y);
+	unit2->path.Clear();
 }
