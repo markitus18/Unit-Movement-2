@@ -116,32 +116,10 @@ void S_SceneMap::ManageInput(float dt)
 {
 	if (App->input->GetInputState() == false)
 	{
-		if (unit)
-		{
-			if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
-			{
-				int hp = unit->GetHP();
-				if (hp < 100)
-					unit->SetHP(++hp);
-			}
-			if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
-			{
-				int hp = unit->GetHP();
-				if (hp > 0)
-					unit->SetHP(--hp);
-			}
-		}
-
 		//Enable / Disable forces debug
 		if (App->input->GetKey(SDL_SCANCODE_F) == KEY_UP)
 		{
 			renderForces = !renderForces;
-		}
-
-		//Enable / Disable map render
-		if (App->input->GetKey(SDL_SCANCODE_D) == KEY_UP)
-		{
-			renderMap = !renderMap;
 		}
 
 		//Enable / Disable unit render
@@ -161,9 +139,6 @@ void S_SceneMap::ManageInput(float dt)
 
 		if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
 			App->render->camera.x -= (int)floor(200.0f * dt);
-
-		if (App->input->GetKey(SDL_SCANCODE_D) == KEY_DOWN)
-			App->gui->debug = !App->gui->debug;
 
 		if (App->render->camera.x > 0)
 			App->render->camera.x = 0;

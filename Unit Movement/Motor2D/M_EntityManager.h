@@ -40,6 +40,7 @@ public:
 public:
 	bool continuous = true;
 	bool smooth = true;
+	bool groupMovement = true;
 
 	bool selectUnits = false;
 

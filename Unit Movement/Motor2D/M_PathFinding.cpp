@@ -50,6 +50,11 @@ bool M_PathFinding::Update(float dt)
 		mapChanged = true;
 	}
 
+	if (App->input->GetKey(SDL_SCANCODE_P) == KEY_DOWN)
+	{
+		allowPath = !allowPath;
+		LOG("Changed allow path state");
+	}
 	if (mapChanged)
 	{
 		App->collisionController->mapChanged = true;

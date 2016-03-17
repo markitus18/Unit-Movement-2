@@ -56,8 +56,7 @@ bool Unit::Update(float dt)
 	{
 		if (UpdateVelocity(dt))
 		{
-
-			if (!Move(dt, collided))
+			if (!Move(dt))
 				targetReached = true;
 		}
 	}
@@ -71,17 +70,15 @@ bool Unit::Update(float dt)
 
 	Draw();
 
-	if (currHP <= 0)
-	{
-		ret = false;
-	}
 	return ret;
 }
 
 bool Unit::UpdateVelocity(float dt)
 {
 	bool ret = true;
+
 	GetDesiredVelocity();
+
 	if (App->entityManager->smooth)
 	{
 		if (!isAngleReached())
@@ -94,24 +91,29 @@ bool Unit::UpdateVelocity(float dt)
 	{
 		currentVelocity = desiredVelocity;
 	}
+	currentVelocity.position = desiredVelocity.position = position;
 	return ret;
 }
 
 //Get the desired velocity: target position - current position
 void Unit::GetDesiredVelocity()
 {
-	C_Vec2<float> velocity;
-
+	//TODO 1: Get the velocity we are looking for.
+		//Remember: velocity module must be "maxSpeed"
+		//Set velocity position to entity position for debug
+	C_Vec2<float> velocity = { 0, 0 };
+	//-----------------------------------
 	velocity.x = (target.x - position.x);
 	velocity.y = (target.y - position.y);
 	velocity.position = position;
 
 	velocity.Normalize();
 	velocity *= maxSpeed;
+	//----------------------------------
 	desiredVelocity = velocity;
 }
 
-bool Unit::Move(float dt, bool& collided)
+bool Unit::Move(float dt)
 {
 	bool ret = true;
 	C_Vec2<float> vel = currentVelocity * dt;
@@ -119,6 +121,9 @@ bool Unit::Move(float dt, bool& collided)
 	//Continuous evaluation
 	if (App->entityManager->continuous)
 	{
+		//TODO 3: Split the velocity in parts and check for the target
+
+		//-------------------------------------------------------
 		//Splitting the velocity into smaller pieces to check if the unit reaches the target
 		float module = vel.GetModule();
 		int steps = floor(vel.GetModule() / targetRadius);
@@ -139,16 +144,23 @@ bool Unit::Move(float dt, bool& collided)
 			if (isTargetReached())
 				ret = false;
 		}
+		//-------------------------------------------------------
 	}
 	//Normal movement
 	else
 	{
+		//TODO 1: Move the unit with the velocity obtained previously
+		//------------------------------------------------------
 		position.x += vel.x;
 		position.y += vel.y;
+		//-----------------------------------------------------
 		if (isTargetReached())
 			ret = false;
 	}
+
+	currentVelocity.position = desiredVelocity.position = position;
 	UpdateCollider();
+
 	return ret;
 }
 
@@ -208,18 +220,24 @@ bool Unit::GetNewTarget()
 
 bool Unit::isTargetReached()
 {
+	bool ret = false;
+
+	//TODO 2: Check if we have reached the target
+
+	//------------------------------------------------------
 	C_Vec2<float> vec;
 	vec.x = target.x - position.x;
 	vec.y = target.y - position.y;
 	float distance = vec.GetModule();
 	if (distance < targetRadius)
 	{
-		position.x = (float)target.x;
-		position.y = (float)target.y;
+		position.x = target.x;
+		position.y = target.y;
 		currentVelocity.position = desiredVelocity.position = position;
-		return true;
+		ret = true;
 	}
-	return false;
+	//-----------------------------------------------------
+	return ret;
 } 
 
 bool Unit::isAngleReached()
@@ -232,6 +250,7 @@ bool Unit::isAngleReached()
 	}
 	return false;
 }
+
 void Unit::SetTarget(int x, int y)
 {
 	target.x = x;

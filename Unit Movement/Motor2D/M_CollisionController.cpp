@@ -45,7 +45,7 @@ bool M_CollisionController::PreUpdate()
 // Called each loop iteration
 bool M_CollisionController::Update(float dt)
 {
-	DoUnitLoop();
+	//DoUnitLoop();
 	return true;
 }
 
@@ -72,24 +72,31 @@ void M_CollisionController::DoUnitLoop()
 	for (int i = 0; i < App->entityManager->unitList.count(); i++)
 	{
 		Unit* unit = App->entityManager->unitList[i];
+		//If unit is moving
 		if (!App->entityManager->unitList[i]->targetReached)
 		{
 			if (mapChanged)
 			{
+				//TODO 6: If a unit is moving, check if any tile from the path is in a non-walkable tile
+				//If so, repath.
 				bool stop = false;
 				for (int n = App->entityManager->unitList[i]->currentNode; n < App->entityManager->unitList[i]->path.Count(); n++)
 				{
 					if (!App->pathFinding->IsWalkable(unit->path[n].x, unit->path[n].y))
 					{
+						//----------------------------------------------------
 						stop = true;
 						C_DynArray<iPoint> newPath;
 						iPoint unitPos = App->map->WorldToMap(unit->GetPosition().x, unit->GetPosition().y);
 						App->pathFinding->GetNewPath(unitPos, unit->path[unit->path.Count() - 1], newPath);
 						unit->SetNewPath(newPath);
+						//-----------------------------------------------------
 					}
 				}
 			}
 		}
+
+		//If unit is not moving
 		else
 		{
 			iPoint unitPos = App->map->WorldToMap(unit->GetPosition().x, unit->GetPosition().y);

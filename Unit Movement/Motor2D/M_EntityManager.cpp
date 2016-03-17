@@ -42,18 +42,6 @@ bool M_EntityManager::Update(float dt)
 
 	DoUnitLoop(dt);
 	UpdateSelectionRect();
-	/*
-	C_List_item<Building*>* item = NULL;
-	item = buildingList.start;
-
-	while (item)
-	{
-	item->data->Update(dt);
-	App->render->Blit(entity_tex, item->data->getPosition().x, item->data->getPosition().y, new SDL_Rect{ 0, 0, 20, 20 }, 1.0f, item->data->GetDirection());
-
-	item = item->next;
-	}
-	*/
 
 	if (App->sceneMap->renderForces)
 		DrawDebug();
@@ -140,25 +128,28 @@ void M_EntityManager::DoUnitLoop(float dt)
 
 void M_EntityManager::UpdateSelectionRect()
 {
-	C_List_item<Unit*>* item = NULL;
-	item = selectedUnits.start;
-
-	int minX = 100000, minY = 100000, maxX = 0, maxY = 0;
-	while (item)
+	if (groupMovement)
 	{
-		if (item->data->GetPosition().x < minX)
-			minX = item->data->GetPosition().x;
-		if (item->data->GetPosition().y < minY)
-			minY = item->data->GetPosition().y;
-		if (item->data->GetPosition().x > maxX)
-			maxX = item->data->GetPosition().x;
-		if (item->data->GetPosition().y > maxY)
-			maxY = item->data->GetPosition().y;
+		C_List_item<Unit*>* item = NULL;
+		item = selectedUnits.start;
 
-		item = item->next;
+		int minX = 100000, minY = 100000, maxX = 0, maxY = 0;
+		while (item)
+		{
+			if (item->data->GetPosition().x < minX)
+				minX = item->data->GetPosition().x;
+			if (item->data->GetPosition().y < minY)
+				minY = item->data->GetPosition().y;
+			if (item->data->GetPosition().x > maxX)
+				maxX = item->data->GetPosition().x;
+			if (item->data->GetPosition().y > maxY)
+				maxY = item->data->GetPosition().y;
+
+			item = item->next;
+		}
+
+		groupRect = { minX, minY, maxX - minX, maxY - minY };
 	}
-
-	groupRect = { minX, minY, maxX - minX, maxY - minY };
 }
 
 void M_EntityManager::ManageInput()
@@ -176,8 +167,27 @@ void M_EntityManager::ManageInput()
 	}
 	if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_UP)
 	{
-			selectUnits = true;
+		selectUnits = true;
 	}
+
+	if (App->input->GetKey(SDL_SCANCODE_S) == KEY_DOWN)
+	{
+		smooth = !smooth;
+		LOG("Changing smooth state");
+	}
+
+	if (App->input->GetKey(SDL_SCANCODE_C) == KEY_DOWN)
+	{
+		continuous = !continuous;
+		LOG("Changing continuous state");
+	}
+
+	if (App->input->GetKey(SDL_SCANCODE_G) == KEY_DOWN)
+	{
+		groupMovement = !groupMovement;
+		LOG("Changing groupMovement state");
+	}
+
 }
 
 Unit* M_EntityManager::CreateUnit(int x, int y, Unit_Type type)
@@ -250,39 +260,72 @@ bool M_EntityManager::IsUnitSelected(C_List_item<Unit*>* unit)
 
 void M_EntityManager::SendNewPath(int x, int y)
 {
-	if (App->pathFinding->IsWalkable(x, y))
+	if (App->pathFinding->allowPath)
 	{
-		//Moving group rectangle to the destination point
-		iPoint Rcenter = App->map->MapToWorld(x, y);
-		destinationRect = { Rcenter.x - groupRect.w / 2, Rcenter.y - groupRect.h / 2, groupRect.w, groupRect.h };
-	
-		//Iteration through all selected units
-		for (uint i = 0; i < selectedUnits.count(); i++)
+		//---------------------------------------------------------------------
+		if (App->pathFinding->IsWalkable(x, y))
 		{
-			C_DynArray<iPoint> newPath;
+			for (uint i = 0; i < selectedUnits.count(); i++)
+			{
+				if (groupMovement)
+				{
+					//TODO 5: Send a different path for each unit:
+					//Find unit position from selection rect, then add it to the destination rect position and get the path
+						//If the destination position is a non-walkable tile, find a path to the tile clicked
+					C_DynArray<iPoint> newPath;
 
-			//Distance from rectangle position to unit position
-			iPoint posFromRect;
-			posFromRect.x = selectedUnits[i]->GetPosition().x - groupRect.x;
-			posFromRect.y = selectedUnits[i]->GetPosition().y - groupRect.y;
 
-			//Destination tile: destination rectangle + previous distance
-			iPoint dstTile = App->map->WorldToMap(destinationRect.x + posFromRect.x, destinationRect.y + posFromRect.y);
+					//Cloning group rectangle to the destination point
+					iPoint Rcenter = App->map->MapToWorld(x, y);
+					destinationRect = { Rcenter.x - groupRect.w / 2, Rcenter.y - groupRect.h / 2, groupRect.w, groupRect.h };
 
-			//Unit tile position
-			fPoint unitPos = selectedUnits[i]->GetPosition();
-			iPoint unitTile = App->map->WorldToMap(round(unitPos.x), round(unitPos.y));
+					//Distance from rectangle position to unit position
+					iPoint posFromRect = { 0, 0 };
 
-			//If destination is not walkable, use the player's clicked tile
-			if (!App->pathFinding->IsWalkable(dstTile.x, dstTile.y))
-				dstTile = { x, y };
+					//--------------------------------------------------------------
+					posFromRect.x = selectedUnits[i]->GetPosition().x - groupRect.x;
+					posFromRect.y = selectedUnits[i]->GetPosition().y - groupRect.y;
 
-			//If a path is found, send it to the unit
-			App->pathFinding->GetNewPath(unitTile, dstTile, newPath);
-				selectedUnits[i]->SetNewPath(newPath);
+					iPoint dstTile = App->map->WorldToMap(destinationRect.x + posFromRect.x, destinationRect.y + posFromRect.y);
+
+					//Unit tile position
+					fPoint unitPos = selectedUnits[i]->GetPosition();
+					iPoint unitTile = App->map->WorldToMap(round(unitPos.x), round(unitPos.y));
+
+					//If destination is not walkable, use the player's clicked tile
+					if (!App->pathFinding->IsWalkable(dstTile.x, dstTile.y))
+						dstTile = { x, y };
+
+					App->pathFinding->GetNewPath(unitTile, dstTile, newPath);
+					selectedUnits[i]->SetNewPath(newPath);
+					//----------------------------------------------
+				}
+				else
+				{
+					//TODO 4: Find a path from unit tile to clicked tile for each selected unit
+						//Remember: App->pathfinding->GetNewPath sends a path from A to B
+					C_DynArray<iPoint> newPath;
+
+					//---------------------------------------------------------
+					fPoint unitPos = selectedUnits[i]->GetPosition();
+					iPoint unitTile = App->map->WorldToMap(round(unitPos.x), round(unitPos.y));
+					iPoint dstTile = { x, y };
+					App->pathFinding->GetNewPath(unitTile, dstTile, newPath);
+					selectedUnits[i]->SetNewPath(newPath);
+					//--------------------------------------------------------
+				}
+			}
 		}
 	}
-
+		//---------------------------------------------------------------------
+	else
+	{
+		for (uint i = 0; i < selectedUnits.count(); i++)
+		{
+			iPoint dst = App->map->MapToWorld(x, y);
+			selectedUnits[i]->SetTarget(dst.x, dst.y);
+		}
+	}
 }
 
 SDL_Texture* M_EntityManager::GetTexture(Unit_Type type)

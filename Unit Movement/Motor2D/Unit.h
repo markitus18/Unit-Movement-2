@@ -31,7 +31,7 @@ public:
 	void GetDesiredVelocity();
 
 	bool Rotate(float dt);
-	bool Move(float dt, bool& col);
+	bool Move(float dt);
 
 	bool GetNewTarget();
 	bool isTargetReached();
@@ -50,7 +50,6 @@ public:
 	
 	void UpdateCollider();
 	void Destroy();
-
 
 	//Drawing methods
 	void Draw();
