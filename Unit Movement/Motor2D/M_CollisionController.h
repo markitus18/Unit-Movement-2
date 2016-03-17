@@ -39,6 +39,8 @@ public:
 
 private:
 	iPoint FindClosestWalkable(int x, int y);
+	bool DoUnitsIntersect(Unit*, Unit*);
+	void SplitUnits(Unit*, Unit*);
 
 public:
 	bool mapChanged = false;

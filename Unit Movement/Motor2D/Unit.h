@@ -59,7 +59,7 @@ public:
 public:
 	//Collision variables
 	int priority;
-	int colRadius = 5;
+	int colRadius = 5 * 4;
 
 private:
 	Unit_Type type = ARBITER;
