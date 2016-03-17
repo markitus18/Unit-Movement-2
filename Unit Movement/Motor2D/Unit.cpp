@@ -121,15 +121,14 @@ bool Unit::Move(float dt, bool& collided)
 	{
 		//Splitting the velocity into smaller pieces to check if the unit reaches the target
 		float module = vel.GetModule();
-		int steps = (int)(floor(vel.GetModule() / (targetRadius / 2)));
-		C_Vec2<float> velStep = (vel.GetNormal() * (targetRadius / 2));
-		C_Vec2<float> rest = vel - vel.GetNormal() * targetRadius / 2 * (float)steps;
+		int steps = floor(vel.GetModule() / targetRadius);
+		C_Vec2<float> velStep = (vel.GetNormal() * targetRadius);
+		C_Vec2<float> rest = vel - velStep * steps;
 
 		for (int i = 0; i < steps && ret; i++)
 		{
 			position.x += velStep.x;
 			position.y += velStep.y;
-			UpdateCollider();
 			if (isTargetReached())
 				ret = false;
 		}
@@ -137,7 +136,6 @@ bool Unit::Move(float dt, bool& collided)
 		{
 			position.x += rest.x;
 			position.y += rest.y;
-			UpdateCollider();
 			if (isTargetReached())
 				ret = false;
 		}
@@ -150,7 +148,7 @@ bool Unit::Move(float dt, bool& collided)
 		if (isTargetReached())
 			ret = false;
 	}
-
+	UpdateCollider();
 	return ret;
 }
 
