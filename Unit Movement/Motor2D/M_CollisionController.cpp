@@ -45,7 +45,7 @@ bool M_CollisionController::PreUpdate()
 // Called each loop iteration
 bool M_CollisionController::Update(float dt)
 {
-	//DoUnitLoop();
+	DoUnitLoop();
 	return true;
 }
 
@@ -79,6 +79,7 @@ void M_CollisionController::DoUnitLoop()
 			{
 				//TODO 6: If a unit is moving, check if any tile from the path is in a non-walkable tile
 				//If so, repath.
+				
 				bool stop = false;
 				for (int n = App->entityManager->unitList[i]->currentNode; n < App->entityManager->unitList[i]->path.Count(); n++)
 				{
@@ -91,8 +92,10 @@ void M_CollisionController::DoUnitLoop()
 						App->pathFinding->GetNewPath(unitPos, unit->path[unit->path.Count() - 1], newPath);
 						unit->SetNewPath(newPath);
 						//-----------------------------------------------------
+						
 					}
 				}
+				
 			}
 		}
 
@@ -103,18 +106,28 @@ void M_CollisionController::DoUnitLoop()
 			if (!App->pathFinding->IsWalkable(unitPos.x, unitPos.y))
 			{
 				LOG("Unit in no-walkable tile");
+				//TODO 7: If the unit is in a non-walkable tile find a nearby walkable tile and repath
+					//Tip: Use "FindClosestWalkable"
+				
+				//--------------------------------------------------------
 				iPoint tile = FindClosestWalkable(unitPos.x, unitPos.y);
 				iPoint dst = App->map->MapToWorld(tile.x, tile.y);
 				unit->SetTarget(dst.x, dst.y);
 				unit->path.Clear();
+				//--------------------------------------------------------
+				
 			}
 			else
 			{
 				bool stop = false;
-				for (int n = 0; n < App->entityManager->unitList.count(); n++ && !stop)
+				for (int n = 0; n < App->entityManager->unitList.count() && !stop; n++)
 				{
 					if (i != n  && App->entityManager->unitList[n]->targetReached)
 					{
+						//TODO 8: If two units are colliding, separe them
+							//Tip: Use "DoUnitsIntersect" and "SplitUnits"
+						
+						//---------------------------------------------------
 						Unit* unit2 = App->entityManager->unitList[n];
 						if (DoUnitsIntersect(unit, unit2))
 						{
@@ -125,8 +138,9 @@ void M_CollisionController::DoUnitLoop()
 								SplitUnits(unit2, unit);
 								stop = true;
 							}
-							LOG("Units overlapping");
 						}
+						//----------------------------------------------------
+						
 					}
 				}
 			}
@@ -185,7 +199,10 @@ bool M_CollisionController::DoUnitsIntersect(Unit* unit1, Unit* unit2)
 	return (distance.GetModule() < unit1->colRadius + unit2->colRadius);
 }
 
-//Higher priority unit is unit1, we will move unit2
+/*
+Higher priority unit is unit1, we will move unit2
+Searches a walkable tile for unit2 and sends it there
+*/
 void M_CollisionController::SplitUnits(Unit* unit1, Unit* unit2)
 {
 	C_Vec2<float> vec = { unit2->GetPosition().x - unit1->GetPosition().x, unit2->GetPosition().y - unit1->GetPosition().y };
@@ -213,6 +230,6 @@ void M_CollisionController::SplitUnits(Unit* unit1, Unit* unit2)
 		loops++;
 	}
 
-	unit2->SetTarget(pos.x, pos.y);
+	unit2->SetTarget(round(pos.x), round(pos.y));
 	unit2->path.Clear();
 }

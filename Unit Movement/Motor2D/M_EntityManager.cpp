@@ -269,11 +269,8 @@ void M_EntityManager::SendNewPath(int x, int y)
 			{
 				if (groupMovement)
 				{
-					//TODO 5: Send a different path for each unit:
-					//Find unit position from selection rect, then add it to the destination rect position and get the path
-						//If the destination position is a non-walkable tile, find a path to the tile clicked
-					C_DynArray<iPoint> newPath;
 
+					C_DynArray<iPoint> newPath;
 
 					//Cloning group rectangle to the destination point
 					iPoint Rcenter = App->map->MapToWorld(x, y);
@@ -281,7 +278,11 @@ void M_EntityManager::SendNewPath(int x, int y)
 
 					//Distance from rectangle position to unit position
 					iPoint posFromRect = { 0, 0 };
-
+					
+					//TODO 5: Send a different path for each unit:
+					//Find unit position from selection rect, then add it to the destination rect position and get the path
+						//If the destination position is a non-walkable tile, find a path to the tile clicked
+					
 					//--------------------------------------------------------------
 					posFromRect.x = selectedUnits[i]->GetPosition().x - groupRect.x;
 					posFromRect.y = selectedUnits[i]->GetPosition().y - groupRect.y;
@@ -299,13 +300,15 @@ void M_EntityManager::SendNewPath(int x, int y)
 					App->pathFinding->GetNewPath(unitTile, dstTile, newPath);
 					selectedUnits[i]->SetNewPath(newPath);
 					//----------------------------------------------
+					
+					
 				}
 				else
 				{
 					//TODO 4: Find a path from unit tile to clicked tile for each selected unit
 						//Remember: App->pathfinding->GetNewPath sends a path from A to B
 					C_DynArray<iPoint> newPath;
-
+					
 					//---------------------------------------------------------
 					fPoint unitPos = selectedUnits[i]->GetPosition();
 					iPoint unitTile = App->map->WorldToMap(round(unitPos.x), round(unitPos.y));
@@ -313,6 +316,7 @@ void M_EntityManager::SendNewPath(int x, int y)
 					App->pathFinding->GetNewPath(unitTile, dstTile, newPath);
 					selectedUnits[i]->SetNewPath(newPath);
 					//--------------------------------------------------------
+					
 				}
 			}
 		}

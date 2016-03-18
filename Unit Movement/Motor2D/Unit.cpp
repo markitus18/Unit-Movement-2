@@ -102,6 +102,7 @@ void Unit::GetDesiredVelocity()
 		//Remember: velocity module must be "maxSpeed"
 		//Set velocity position to entity position for debug
 	C_Vec2<float> velocity = { 0, 0 };
+	
 	//-----------------------------------
 	velocity.x = (target.x - position.x);
 	velocity.y = (target.y - position.y);
@@ -110,6 +111,7 @@ void Unit::GetDesiredVelocity()
 	velocity.Normalize();
 	velocity *= maxSpeed;
 	//----------------------------------
+	
 	desiredVelocity = velocity;
 }
 
@@ -122,13 +124,13 @@ bool Unit::Move(float dt)
 	if (App->entityManager->continuous)
 	{
 		//TODO 3: Split the velocity in parts and check for the target
-
+		
 		//-------------------------------------------------------
 		//Splitting the velocity into smaller pieces to check if the unit reaches the target
 		float module = vel.GetModule();
-		int steps = floor(vel.GetModule() / targetRadius);
+		int steps = (int)floor(vel.GetModule() / targetRadius);
 		C_Vec2<float> velStep = (vel.GetNormal() * targetRadius);
-		C_Vec2<float> rest = vel - velStep * steps;
+		C_Vec2<float> rest = vel - velStep * (float)steps;
 
 		for (int i = 0; i < steps && ret; i++)
 		{
@@ -145,15 +147,18 @@ bool Unit::Move(float dt)
 				ret = false;
 		}
 		//-------------------------------------------------------
+		
 	}
 	//Normal movement
 	else
 	{
 		//TODO 1: Move the unit with the velocity obtained previously
+		
 		//------------------------------------------------------
 		position.x += vel.x;
 		position.y += vel.y;
 		//-----------------------------------------------------
+		
 		if (isTargetReached())
 			ret = false;
 	}
@@ -220,10 +225,8 @@ bool Unit::GetNewTarget()
 
 bool Unit::isTargetReached()
 {
-	bool ret = false;
-
 	//TODO 2: Check if we have reached the target
-
+	
 	//------------------------------------------------------
 	C_Vec2<float> vec;
 	vec.x = target.x - position.x;
@@ -231,13 +234,14 @@ bool Unit::isTargetReached()
 	float distance = vec.GetModule();
 	if (distance < targetRadius)
 	{
-		position.x = target.x;
-		position.y = target.y;
+		position.x = (float)target.x;
+		position.y = (float)target.y;
 		currentVelocity.position = desiredVelocity.position = position;
-		ret = true;
+		return true;
 	}
 	//-----------------------------------------------------
-	return ret;
+	
+	return false;
 } 
 
 bool Unit::isAngleReached()

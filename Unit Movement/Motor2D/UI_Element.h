@@ -183,8 +183,6 @@ public:
 
 private:
 
-	//Todo: Text label description
-
 //Order* order;
 
 	//The image that will actually change

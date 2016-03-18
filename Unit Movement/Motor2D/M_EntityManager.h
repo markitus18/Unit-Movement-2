@@ -39,7 +39,7 @@ public:
 	//should be priv
 public:
 	bool continuous = true;
-	bool smooth = true;
+	bool smooth = false;
 	bool groupMovement = true;
 
 	bool selectUnits = false;
